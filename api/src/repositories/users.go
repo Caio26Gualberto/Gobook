@@ -61,3 +61,22 @@ func (u users) GetAllByNameOrNick(nameOrNick string) ([]models.User, error) {
 
 	return users, nil
 }
+
+func (u users) GetUserById(id uint64) (models.User, error) {
+	rows, err := u.db.Query("select id, name, nick, email, creationTime from users where id = ?", id)
+
+	if err != nil {
+		return models.User{}, err
+	}
+	defer rows.Close()
+
+	var user models.User
+
+	if rows.Next() {
+		if err = rows.Scan(&user.Id, &user.Name, &user.Nick, &user.Email, &user.CreationTime); err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return user, nil
+}
