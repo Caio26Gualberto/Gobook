@@ -80,3 +80,18 @@ func (u users) GetUserById(id uint64) (models.User, error) {
 
 	return user, nil
 }
+
+func (u users) Update(id uint64, user models.User) error {
+	statement, err := u.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
+
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(user.Name, user.Nick, user.Email, id); err != nil {
+		return err
+	}
+
+	return nil
+}
